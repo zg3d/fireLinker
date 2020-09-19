@@ -1,0 +1,30 @@
+{
+  "name": "firelinker",
+  "version": "0.0.8",
+  "description": "A tool to check for broken links in a given document",
+  "main": "./src/index.js",
+  "bin": {
+    "flink": "./src/index.js"
+  },
+  "scripts": {
+    "create": "npm link && flink",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zg3d/fireLinker.git"
+  },
+  "author": "Devansh Shah",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zg3d/fireLinker/issues"
+  },
+  "homepage": "https://github.com/zg3d/fireLinker#readme",
+  "dependencies": {
+    "axios": "^0.20.0",
+    "chalk": "^4.1.0",
+    "fs": "0.0.1-security",
+    "node-fetch": "^2.6.1",
+    "yargs": "^16.0.3"
+  }
+}
