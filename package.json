@@ -6,13 +6,15 @@
   "bin": {
     "flink": "./src/index.js"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zg3d/fireLinker.git"
   },
+  "engines": {
+    "node": ">=12"
+  },
+  "preferGlobal": true,
   "author": "Devansh Shah",
   "license": "MIT",
   "bugs": {
