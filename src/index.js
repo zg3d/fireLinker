@@ -32,7 +32,7 @@ const linkchecker = async (link) => {
     status = res.status;
 
   } catch (e) {
-    console.log(e);
+    
     status = 999;
   }
 
@@ -56,11 +56,10 @@ const documentProccessing = async (doc) => {
   try {
     let data = await fs.readFile(path.normalize(doc), "utf8"); // gets the data in the document
     // converts it to a string
-
     //LINK PROCESSING
     let links = [...new Set(data.match(link_reg))];
     for (link of links) {
-      await linkchecker(link);
+      await linkchecker(new Link(link,StatusEnum.unknown));
     }
   } catch (e) {
     console.log(e);
