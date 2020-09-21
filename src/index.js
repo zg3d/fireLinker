@@ -23,32 +23,31 @@ class Link {
   }
 }
 
-const linkchecker = async (link) => {
+const linkchecker = (link) => {
   //processes Links
-  let status = 200;
-  try {
-    let res = await fetch(link.url,{method:'HEAD'});
+  let status = 999;
 
-    status = res.status;
-
-  } catch (e) {
-    
-    status = 999;
-  }
-
-  switch (status) {
-    case 200:
-      link.status = StatusEnum.good;
-      console.log(chalk.green(link.toString()));
-      break;
-    case 400:
-    case 404:
-      link.status = StatusEnum.bad;
-      console.log(chalk.red(link.toString()));
-      break;
-    default:
+  fetch(link.url,{method:'HEAD'})
+    .then((res) => {
+      switch (res.status) {
+        case 200:
+          link.status = StatusEnum.good;
+          console.log(chalk.green(link.toString()));
+          break;
+        case 400:
+        case 404:
+          link.status = StatusEnum.bad;
+          console.log(chalk.red(link.toString()));
+          break;
+        default:
+          console.log(chalk.grey(link.toString()));
+      }
+    })
+    .catch((e) => {
       console.log(chalk.grey(link.toString()));
-  }
+    });
+
+  // status = res.status;
 };
 
 const documentProccessing = async (doc) => {
@@ -59,7 +58,9 @@ const documentProccessing = async (doc) => {
     //LINK PROCESSING
     let links = [...new Set(data.match(link_reg))];
     for (link of links) {
-      await linkchecker(new Link(link,StatusEnum.unknown));
+      let checkThis = new Link(link, StatusEnum.unknown);
+      linkchecker(checkThis);
+
     }
   } catch (e) {
     console.log(e);
