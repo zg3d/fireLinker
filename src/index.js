@@ -62,6 +62,9 @@ const argv = yargs
   .usage(
     "To use this tool type :\n$flink <file> -- where file is the name of the file"
   )
+  .alias('v','version')
+  .help('h')
+  .alias('h', 'help')
   .demandCommand(1, "").argv;
 let document = "";
 
