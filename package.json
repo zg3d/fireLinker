@@ -22,7 +22,6 @@
   },
   "homepage": "https://github.com/zg3d/fireLinker#readme",
   "dependencies": {
-    "axios": "^0.20.0",
     "chalk": "^4.1.0",
     "fs": "0.0.1-security",
     "node-fetch": "^2.6.1",
