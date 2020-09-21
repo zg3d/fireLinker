@@ -3,6 +3,7 @@ const yargs = require("yargs");
 const fs = require("fs").promises;
 const fetch = require("node-fetch");
 const chalk = require("chalk");
+const path = require("path");
 const link_reg = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
 
 const StatusEnum = Object.freeze({
@@ -26,10 +27,12 @@ const linkchecker = async (link) => {
   //processes Links
   let status = 200;
   try {
-    let res = await fetch(link.url);
+    let res = await fetch(link.url,{method:'HEAD'});
 
     status = res.status;
+
   } catch (e) {
+    console.log(e);
     status = 999;
   }
 
@@ -51,19 +54,14 @@ const linkchecker = async (link) => {
 const documentProccessing = async (doc) => {
   //processDocument
   try {
-    let data = await fs.readFile(process.cwd() + "/" + doc, "utf8"); // gets the data in the document
-    doc = data.toString(); // converts it to a string
+    let data = await fs.readFile(path.normalize(doc), "utf8"); // gets the data in the document
+    // converts it to a string
 
     //LINK PROCESSING
-    let links = [];
-
-    new Set(doc.match(link_reg)).forEach((e) => {
-      // gets all http/https linnks in the document and create a Link and checks it
-
-      let checkThis = new Link(e, StatusEnum.unknown);
-      linkchecker(checkThis);
-      links.push(checkThis);
-    });
+    let links = [...new Set(data.match(link_reg))];
+    for (link of links) {
+      await linkchecker(link);
+    }
   } catch (e) {
     console.log(e);
   }
