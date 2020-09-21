@@ -1,5 +1,5 @@
 # fireLinker
 
-npm i
-npm link 
-then you can use command flink
+npm i -g  https://github.com/zg3d/fireLinker
+
+Command : flink <file>
