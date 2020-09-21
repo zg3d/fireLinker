@@ -1,12 +1,27 @@
 #!/usr/bin/env node
 const yargs = require("yargs");
-const fs = require("fs");
+const fs = require("fs").promises;
 const fetch = require("node-fetch");
-const chalk = require('chalk');
-const linkchecker = async (link) => {
+const chalk = require("chalk");
+const link_reg = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
+
+const StatusEnum = Object.freeze({good:'GOOD',bad:'BAD',unknown:'UNKNOWN'}); // create a ststus enumeration
+
+class Link { // class for Link with 2 propties Url and status 
+  constructor(url, status) {
+    this.url = url;
+    this.status = status;
+  }
+  toString() {
+      return `Link: ${this.url} status : ${this.status}`;
+  }
+}
+
+
+const linkchecker = async (link) => { //processes Links
   let status = 200;
   try {
-    let res = await fetch(link);
+    let res = await fetch(link.url);
 
     status = res.status;
   } catch (e) {
@@ -15,18 +30,32 @@ const linkchecker = async (link) => {
 
   switch (status) {
     case 200:
-      console.log(chalk.green(`Link: ${link} status : GOOD`));
+      link.status = StatusEnum.good;
+      console.log(chalk.green(link.toString()));
       break;
     case 400:
-      console.log(chalk.red(`Link: ${link} status : BAD`));
-      break;
     case 404:
-        console.log(chalk.red(`Link: ${link} status : BAD`));
+      link.status = StatusEnum.bad;
+      console.log(chalk.red(link.toString()));
       break;
     default:
-        console.log(chalk.yellow(`Link: ${link} status : Unkown`));
+      console.log(chalk.grey(link.toString()));
   }
+};
 
+const documentProccessing = async (doc) => { //processDocument
+  try {
+    let data = await fs.readFile(process.cwd() + "/" + doc, "utf8"); // gets the data in the document
+    doc = data.toString(); // converts it to a string
+  
+    //LINK PROCESSING
+    let links = [];
+      new Set(doc.match(link_reg)).forEach(e => { // gets all http/https linnks in the document and create a Link and checks it
+      let checkThis = new Link(e,StatusEnum.unknown);
+      linkchecker(checkThis);
+      links.push(checkThis);
+    });
+  } catch (e) { console.log(e)}
 };
 
 const argv = yargs
@@ -35,19 +64,10 @@ const argv = yargs
   )
   .demandCommand(1, "").argv;
 let document = "";
-const link_reg = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
 
 if (argv._.length > 0) {
   //file procccesing
   document = argv._[0];
-  let urls = [];
-  fs.readFile(process.cwd() + "/" + document, "utf8", function (err, data) {
-    if (err) throw err;
-    document = data.toString();
-    document.match(link_reg).forEach((e) => {
-      linkchecker(e);
-    });
-  });
-
-  //LINK PROCESSING
+  console.log(document);
+  documentProccessing(document);
 }
