@@ -13,10 +13,10 @@ const StatusEnum = Object.freeze({
 }); // create a status enumeration
 
 class Link {
-  // class for Link with 2 properties Url and status
-  status = "s";
-  constructor(url) {
+  // class for Link with 2 propties Url and status
+  constructor(url, status) {
     this.url = url;
+    this.status = status;
   }
   toString() {
     return `Link: ${this.url} status : ${this.status}`;
@@ -27,7 +27,7 @@ const linkchecker = (link) => {
   //processes Links
   let status = 999;
 
-  fetch(link.url,{method:'HEAD', timeout: 1500})
+  fetch(link.url,{method:'HEAD'})
     .then((res) => {
       switch (res.status) {
         case 200:
@@ -40,12 +40,10 @@ const linkchecker = (link) => {
           console.log(chalk.red(link.toString()));
           break;
         default:
-          link.status = StatusEnum.unknown;
           console.log(chalk.grey(link.toString()));
       }
     })
     .catch((e) => {
-      link.status = StatusEnum.unknown;
       console.log(chalk.grey(link.toString()));
     });
 
@@ -60,7 +58,7 @@ const documentProccessing = async (doc) => {
     //LINK PROCESSING
     let links = [...new Set(data.match(link_reg))];
     for (link of links) {
-      let checkThis = new Link(link);
+      let checkThis = new Link(link, StatusEnum.unknown);
       linkchecker(checkThis);
 
     }
