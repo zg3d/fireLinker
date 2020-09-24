@@ -45,8 +45,8 @@ const linkchecker = (link) => {
       }
     })
     .catch((e) => {
-      link.status = StatusEnum.unknown;
-      console.log(chalk.grey(link.toString()));
+      link.status = StatusEnum.bad;
+      console.log(chalk.red(link.toString()));
     });
 
   // status = res.status;
