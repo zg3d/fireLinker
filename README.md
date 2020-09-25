@@ -10,9 +10,11 @@
 
 ## Features
 Status codes supported
-  *200 
-  *400 
-  *404
+  <ul>
+  <li>200</li> 
+  <li>400 </li>
+  <li>404</li>
+  </ul>
 
 URL Protocools supported
 -HTTP
