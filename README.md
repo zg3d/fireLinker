@@ -8,6 +8,9 @@
 
 > A CLI tool that checks documents for broken http/https links
 
+## Supports
+codes 200, 400, 404
+
 ## Install
 
 ```sh
@@ -17,7 +20,7 @@ npm i -g https://github.com/zg3d/fireLinker
 ## Usage
 
 ```sh
-flink
+flink <file>
 ```
 
 ## Author
