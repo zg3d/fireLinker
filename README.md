@@ -6,10 +6,24 @@
   </a>
 </p>
 
-> A CLI tool that checks documents for broken http/https links
+> A CLI tool that searches documents for the status of URLs/Links
 
-## Supports
-codes 200, 400, 404
+## Features
+Status codes supported
+*200 
+*400 
+*404
+
+URL Protocools supported
+-HTTP
+-HTTPS
+
+Colors
+red = bad URL
+green = good URL
+grey = unkown URL
+
+
 
 ## Install
 
@@ -20,8 +34,10 @@ npm i -g https://github.com/zg3d/fireLinker
 ## Usage
 
 ```sh
-flink <file>
+flink <FILE>
 ```
+
+
 
 ## Author
 
@@ -34,4 +50,3 @@ flink <file>
 Give a ⭐️ if this project helped you!
 
 ***
-_This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
