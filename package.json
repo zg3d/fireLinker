@@ -1,6 +1,6 @@
 {
   "name": "firelinker",
-  "version": "0.0.8",
+  "version": "0.1.0",
   "description": "A tool to check for broken links in a given document",
   "main": "./src/index.js",
   "bin": {
@@ -22,9 +22,11 @@
   },
   "homepage": "https://github.com/zg3d/fireLinker#readme",
   "dependencies": {
+    "abort-controller": "^3.0.0",
     "chalk": "^4.1.0",
     "fs": "0.0.1-security",
     "node-fetch": "^2.6.1",
+    "ora": "^5.1.0",
     "path": "^0.12.7",
     "yargs": "^16.0.3"
   }

@@ -25,6 +25,7 @@ flink <FILE>
   <li>200</li> 
   <li>400 </li>
   <li>404</li>
+  <li>410</li>
   </ul>
 
 ### URL Protocools Supported
@@ -34,9 +35,9 @@ flink <FILE>
   </ul>
 
 ### Colors Supported
-* <p style="color:green"> GOOD URL</p>
-* <p style="color:red"> BAD URL</p>
-* <p style="color:grey">  UNKOWN URL</p>
+* <p style="color:green">Green = GOOD URL</p>
+* <p style="color:red">Red = BAD URL</p>
+* <p style="color:grey">Grey =  UNKOWN URL</p>
 
 ### Commands Supported
 ```
