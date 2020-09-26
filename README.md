@@ -19,6 +19,9 @@ npm i -g https://github.com/zg3d/fireLinker
 flink <FILE>
 ```
 
+## Demo
+![Alt Text](cliFlink.gif)
+
 ## Features
 ### Status codes Supported
   <ul>
