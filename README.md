@@ -31,7 +31,7 @@ flink <FILE>
   <li>410</li>
   </ul>
 
-### URL Protocools Supported
+### URL Protocols Supported
   <ul>
   <li>HTTP</li> 
   <li>HTTPS</li>
