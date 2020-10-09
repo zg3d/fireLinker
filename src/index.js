@@ -7,7 +7,7 @@ const path = require("path");
 const ora = require('ora');
 const AbortController = require("abort-controller");
 const { link } = require("fs");
-
+let json  = false;
 const controller = new AbortController();
 /* const timeout = setTimeout(() => {
   controller.abort();
@@ -25,11 +25,12 @@ class Link {
   constructor(url, status) {
     this.url = url;
     this.status = status;
+    this.code='';
   }
   toString() {
     return `Link: ${this.url} status : ${this.status}`;
   }
-
+  
   log() {
     switch (this.status) {
       case StatusEnum.good:
@@ -56,6 +57,7 @@ const linkchecker = (link) => {
       signal: controller.signal,
     })
       .then((res) => {
+        link.code =res.status + "";
         switch (res.status) {
           case 200:
             link.status = StatusEnum.good;
@@ -105,10 +107,17 @@ const documentProccessing = async (doc) => {
     ); // maps all url into a Link class
     await Promise.all(links.map(linkchecker)); // waits for all the promises to return
     spin.stop();
+    if(json)
+    {
+      console.log(JSON.stringify(URLS));
+    }
+    else{
     URLS.forEach(e => e.log());
+    console.log(`Fire Linker took ${Math.round(time)} secs to check ${URLS.length} links.`);
+    }
     time = ((new Date()) - time)/1000;
 
-    console.log(`Fire Linker took ${Math.round(time)} secs to check ${URLS.length} links.`);
+    
    
 
 
@@ -118,19 +127,24 @@ const documentProccessing = async (doc) => {
   }
  
 };
+yargs.postio
 
 const argv = yargs
   .usage(
     "To use this tool type :\n$flink <file> -- where file is the name of the file"
-  )
+  ).nargs("j",1)
+  .describe("j","output to json")
+  .alias("j","json")
   .alias("v", "version")
   .help("h")
   .alias("h", "help")
-  .demandCommand(1, "").argv;
-let document = "";
+  .argv;
 
-if (argv._.length > 0) {
+let document = "";
+json = argv.j != undefined;
+console.log(json);
+if (argv.j || argv._[0]) {
   //file procccesing
-  document = argv._[0];
+  document = argv.j || argv._[0];
   documentProccessing(document);
 }
