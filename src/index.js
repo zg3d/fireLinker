@@ -4,10 +4,12 @@ const fs = require("fs").promises;
 const fetch = require("node-fetch");
 const chalk = require("chalk");
 const path = require("path");
-const ora = require('ora');
+const ora = require("ora");
 const AbortController = require("abort-controller");
 const { link } = require("fs");
-let json  = false;
+const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require("constants");
+const { exit } = require("process");
+let json = false;
 const controller = new AbortController();
 /* const timeout = setTimeout(() => {
   controller.abort();
@@ -19,18 +21,19 @@ const StatusEnum = Object.freeze({
   bad: "BAD",
   unknown: "UNKNOWN",
 }); // create a status enumeration
-
+let exitCode = 0;
 class Link {
   // class for Link with 2 propties Url and status
   constructor(url, status) {
     this.url = url;
     this.status = status;
-    this.code='';
+    this.code = "";
   }
+
   toString() {
     return `Link: ${this.url} status : ${this.status}`;
   }
-  
+
   log() {
     switch (this.status) {
       case StatusEnum.good:
@@ -57,7 +60,7 @@ const linkchecker = (link) => {
       signal: controller.signal,
     })
       .then((res) => {
-        link.code =res.status + "";
+        link.code = res.status + "";
         switch (res.status) {
           case 200:
             link.status = StatusEnum.good;
@@ -65,15 +68,17 @@ const linkchecker = (link) => {
           case 400:
           case 410:
           case 404:
+            exitCode++;
             link.status = StatusEnum.bad;
             break;
           default:
+            exitCode++;
         }
         URLS.push(link);
         resolve(res.status);
       })
       .catch((e) => {
-        
+        exitCode++;
         link.status = StatusEnum.bad;
         URLS.push(link);
         resolve(e);
@@ -85,60 +90,57 @@ const linkchecker = (link) => {
 
 const documentProccessing = async (doc) => {
   //processDocument
-  
+
   try {
     let data = await fs.readFile(path.normalize(doc), "utf8"); // gets the data in the document
     // converts it to a string
     //LINK PROCESSING
-    const spin = ora({text:`Fire Linker - checking all links in ${doc}`, spinner:{
-      interval: 80, // Optional
-      frames: [
-        ".",
-        "-",
-        "–",
-        "—",
-        "–",
-        "-"
-      ]
-     }}).start();
+    const spin = ora({
+      text: `Fire Linker - checking all links in ${doc}`,
+      spinner: {
+        interval: 80, // Optional
+        frames: [".", "-", "–", "—", "–", "-"],
+      },
+    }).start();
     let time = new Date();
     let links = [...new Set(data.match(link_reg))].map(
       (e) => new Link(e, StatusEnum.unknown)
     ); // maps all url into a Link class
     await Promise.all(links.map(linkchecker)); // waits for all the promises to return
     spin.stop();
-    if(json)
-    {
+    if (json) {
       console.log(JSON.stringify(URLS));
+    } else {
+      URLS.forEach((e) => e.log());
+      time = (new Date() - time) / 1000;
+      console.log(
+        `Fire Linker took ${Math.round(time)} secs to check ${
+          URLS.length
+        } links.`
+      );
     }
-    else{
-    URLS.forEach(e => e.log());
-    console.log(`Fire Linker took ${Math.round(time)} secs to check ${URLS.length} links.`);
-    }
-    time = ((new Date()) - time)/1000;
+    
 
     
-   
-
-
   } catch (e) {
+    exitCode++;
     console.log(e);
     console.log(chalk.red("The <FILE> is not found"));
   }
- 
+  process.exit(exitCode);
 };
-yargs.postio
+yargs.postio;
 
 const argv = yargs
   .usage(
     "To use this tool type :\n$flink <file> -- where file is the name of the file"
-  ).nargs("j",1)
-  .describe("j","output to json")
-  .alias("j","json")
+  )
+  .nargs("j", 1)
+  .describe("j", "output to json")
+  .alias("j", "json")
   .alias("v", "version")
   .help("h")
-  .alias("h", "help")
-  .argv;
+  .alias("h", "help").argv;
 
 let document = "";
 json = argv.j != undefined;
