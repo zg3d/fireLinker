@@ -144,7 +144,7 @@ const argv = yargs
 
 let document = "";
 json = argv.j != undefined;
-console.log(json);
+
 if (argv.j || argv._[0]) {
   //file procccesing
   document = argv.j || argv._[0];
