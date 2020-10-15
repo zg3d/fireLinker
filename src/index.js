@@ -6,9 +6,7 @@ const chalk = require("chalk");
 const path = require("path");
 const ora = require("ora");
 const AbortController = require("abort-controller");
-const { link } = require("fs");
-const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require("constants");
-const { exit } = require("process");
+
 let json = false;
 const controller = new AbortController();
 /* const timeout = setTimeout(() => {
@@ -140,13 +138,24 @@ const argv = yargs
   .alias("j", "json")
   .alias("v", "version")
   .help("h")
-  .alias("h", "help").argv;
+  .alias("h", "help")
+  .demandCommand(0,"").argv;
 
 let document = "";
 json = argv.j != undefined;
 
-if (argv.j || argv._[0]) {
+if (argv.j || argv._[0] != undefined ) {
   //file procccesing
   document = argv.j || argv._[0];
   documentProccessing(document);
+}
+else {
+  //console.log(yargs.help());
+  console.log(`To use this tool type :
+  $flink <file> -- where file is the name of the file
+  
+  Options:
+    -j, --json     output to json
+    -h, --help     Show help                                             [boolean]
+    -v, --version  Show version number                                   [boolean]`)
 }
