@@ -46,10 +46,11 @@ flink <FILE>
 ```
 flink <file> -- where file is the name of the file
 
-Options:
-  -h, --help     Show help                                         [boolean]
-  -v, --version  Show version number                               [boolean]
-
+  Options:
+    -i, --ignore <file>   Ignored URL patterns file
+    -j, --json            output to json
+    -h, --help            Show help                                      [boolean]
+    -v, --version         Show version number                            [boolean]
 ```
 
 
