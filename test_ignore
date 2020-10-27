@@ -1,0 +1,13 @@
+# 2. File with a comment and single URL that matches any URL
+# that starts with https://www.google.com, for example:
+#
+# https://www.google.com/index.html would match
+# https://www.google.com/ would match
+# https://www.google.ca would NOT match
+https://www.google.com
+# This is invalid.  It doesn't use http:// or https://
+# www.google.com
+http://github.com
+https://youtube.com
+ invalid.ca
+# another invalid line
