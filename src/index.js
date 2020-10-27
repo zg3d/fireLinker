@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+"use strict";
 const yargs = require("yargs");
 const fs = require("fs").promises;
 const fetch = require("node-fetch");
@@ -7,8 +8,7 @@ const path = require("path");
 const ora = require("ora");
 const AbortController = require("abort-controller");
 
-let json = false;
-const controller = new AbortController();
+
 /* const timeout = setTimeout(() => {
   controller.abort();
 }, 150); */
@@ -55,7 +55,7 @@ const linkchecker = (link) => {
   return new Promise((resolve, reject) =>
     fetch(link.url, {
       method: "HEAD",
-      signal: controller.signal,
+      signal: (new AbortController()).signal,
     })
       .then((res) => {
         link.code = res.status + "";
@@ -86,28 +86,28 @@ const linkchecker = (link) => {
   // status = res.status;
 };
 
-const documentProccessing = async (doc, ignoreDoc = null) => {
+const documentProccessing = async (doc, ignoreDoc = null, json) => {
   //processDocument
 
   try {
     let data = await fs.readFile(path.normalize(doc), "utf8"); // gets the data in the document
     // converts it to a string
-    
-    if (ignoreDoc != null) { 
+
+    if (ignoreDoc != null) {
       let ignoreData = await fs.readFile(path.normalize(ignoreDoc), "utf8"); // gets the data from the ignored patterns document
       ignoreData = ignoreData.replace(/^#.*(\r?\n|\r)/gim, "");
 
       let ignorePatterns = [];
 
       // loops through all 'link_reg' matches and pushes to an array of regexes
-      ignoreData.match(link_reg).forEach(url => {
+      ignoreData.match(link_reg).forEach((url) => {
         let retainDotsUrl = url.replace(/\./gim, "\\.");
-        ignorePatterns.push(new RegExp(retainDotsUrl+".*(\r?\n|\r)?", "gim"));
+        ignorePatterns.push(new RegExp(retainDotsUrl + ".*(\r?\n|\r)?", "gim"));
       });
 
-      ignorePatterns.forEach(regex => data = data.replace(regex, ""));
+      ignorePatterns.forEach((regex) => (data = data.replace(regex, "")));
     }
-    
+
     //LINK PROCESSING
     const spin = ora({
       text: `Fire Linker - checking all links in ${doc}`,
@@ -133,9 +133,6 @@ const documentProccessing = async (doc, ignoreDoc = null) => {
         } links.`
       );
     }
-    
-
-    
   } catch (e) {
     exitCode++;
     console.log(e);
@@ -143,40 +140,41 @@ const documentProccessing = async (doc, ignoreDoc = null) => {
   }
   process.exit(exitCode);
 };
-yargs.postio;
 
-const argv = yargs
-  .usage(
-    "To use this tool type :\n$flink <file> -- where file is the name of the file"
-  )
-  .nargs("j", 1)
-  .describe("j", "output to json")
-  .alias("j", "json")
-  .alias("v", "version")
-  .alias("i", "ignore")
-  .string("ignore")
-  .help("h")
-  .alias("h", "help")
-  .demandCommand(0,"").argv;
+function start() {
+  const argv = yargs
+    .usage(
+      "To use this tool type :\n$flink <file> -- where file is the name of the file"
+    )
+    .nargs("j", 1)
+    .describe("j", "output to json")
+    .alias("j", "json")
+    .alias("v", "version")
+    .alias("i", "ignore")
+    .string("ignore")
+    .help("h")
+    .alias("h", "help")
+    .demandCommand(0, "").argv;
 
-let document = "";
-let ignoreFile = "";
-json = argv.j != undefined;
+  if (argv.j || argv._[0] != undefined) {
+    //file procccesing
+    let document = "";
 
-if (argv.j || argv._[0] != undefined ) {
-  //file procccesing
-  document = argv.j || argv._[0];
-  ignoreFile = (argv.i != undefined || argv.i == "" ? argv.i : null);
-  documentProccessing(document, ignoreFile);
-}
-else {
-  //console.log(yargs.help());
-  console.log(`To use this tool type :
+    let ignoreFile = "";
+
+    document = argv.j || argv._[0];
+    ignoreFile = argv.i != undefined || argv.i == "" ? argv.i : null;
+    documentProccessing(document, ignoreFile, argv.j);
+  } else {
+    //console.log(yargs.help());
+    console.log(`To use this tool type :
   $flink <file> -- where file is the name of the file
   
   Options:
     -i, --ignore <file>   Ignored URL patterns file
     -j, --json            output to json
     -h, --help            Show help                                      [boolean]
-    -v, --version         Show version number                            [boolean]`)
+    -v, --version         Show version number                            [boolean]`);
+  }
 }
+start();
