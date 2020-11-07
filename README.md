@@ -44,19 +44,32 @@ flink <FILE>
 
 ### Commands Supported
 ```
-flink <file> -- where file is the name of the file
-
-  Options:
-    -i, --ignore <file>   Ignored URL patterns file
-    -j, --json            output to json
-    -h, --help            Show help                                      [boolean]
-    -v, --version         Show version number                            [boolean]
+To use this tool type :
+    $flink <file> -- where file is the name of the file
+    
+    Options:
+      -j, --json     output to json
+      -a, --api      Check all links in API
+      -h, --help     Show help                                             [boolean]
+      -v, --version  Show version number                                   [boolean]
 ```
-
-
-
-
-
+### API Support
+needs to have a url attribute
+Usage
+```sh
+$ flink -a http://localhost:3000/posts
+Link: http://localhost:3000/posts/af9597b1f6 status : GOOD
+Link: http://localhost:3000/posts/1270baa03e status : GOOD
+Link: http://localhost:3000/posts/bafac59742 status : GOOD
+Link: http://localhost:3000/posts/30b2a49c48 status : GOOD
+Link: http://localhost:3000/posts/e6289c2fc1 status : GOOD
+Link: http://localhost:3000/posts/e8e8e890e1 status : GOOD
+Link: http://localhost:3000/posts/286248fb83 status : GOOD
+Link: http://localhost:3000/posts/f4a6d1cc89 status : GOOD
+Link: http://localhost:3000/posts/58fe66af20 status : GOOD
+Link: http://localhost:3000/posts/f2951948eb status : GOOD
+Fire Linker took 0 secs to check 10 links.
+```
 
 
 

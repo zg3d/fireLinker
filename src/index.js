@@ -9,6 +9,7 @@ const ora = require("ora");
 const AbortController = require("abort-controller");
 
 
+
 /* const timeout = setTimeout(() => {
   controller.abort();
 }, 150); */
@@ -108,20 +109,13 @@ const documentProccessing = async (doc, ignoreDoc = null, json) => {
       ignorePatterns.forEach((regex) => (data = data.replace(regex, "")));
     }
 
-    //LINK PROCESSING
-    const spin = ora({
-      text: `Fire Linker - checking all links in ${doc}`,
-      spinner: {
-        interval: 80, // Optional
-        frames: [".", "-", "–", "—", "–", "-"],
-      },
-    }).start();
+    
     let time = new Date();
     let links = [...new Set(data.match(link_reg))].map(
       (e) => new Link(e, StatusEnum.unknown)
     ); // maps all url into a Link class
     await Promise.all(links.map(linkchecker)); // waits for all the promises to return
-    spin.stop();
+    
     if (json) {
       console.log(JSON.stringify(URLS));
     } else {
@@ -140,6 +134,53 @@ const documentProccessing = async (doc, ignoreDoc = null, json) => {
   }
   process.exit(exitCode);
 };
+const apiProccessing = async (api) =>{
+
+  try{
+   
+    const urlparse =  require('url').parse(api);
+    let base = urlparse.protocol + "//" + urlparse.host;
+    let data = await (await fetch(api)).json();
+  
+    let arrayObj = data;
+    let urlsToCheck = [];
+    
+      arrayObj.forEach(e=>{
+       
+          if(e.url)
+          {
+            let pat = /^https?:\/\//i;
+            if(pat.test(e.url))
+            {
+              urlsToCheck.push(e.url);
+            }
+            else{
+               urlsToCheck.push(base+e.url);
+            }
+          }
+      });
+      let time = new Date();
+      let links = [...new Set(urlsToCheck)].map(
+        (e) => new Link(e, StatusEnum.unknown)
+      ); // maps all url into a Link class
+      await Promise.all(links.map(linkchecker)); // waits for all the promises to return
+     
+   
+        URLS.forEach((e) => e.log());
+        time = (new Date() - time) / 1000;
+        console.log(
+          `Fire Linker took ${Math.round(time)} secs to check ${
+            URLS.length
+          } links.`
+        );
+    
+    
+     
+
+  }catch(e){
+    console.log(e);
+  }
+}
 
 function start() {
   const argv = yargs
@@ -148,6 +189,9 @@ function start() {
     )
     .nargs("j", 1)
     .describe("j", "output to json")
+    .nargs("a", 1)
+    .describe("a", "Check all links in API")
+    .alias("a","api")
     .alias("j", "json")
     .alias("v", "version")
     .alias("i", "ignore")
@@ -155,8 +199,23 @@ function start() {
     .help("h")
     .alias("h", "help")
     .demandCommand(0, "").argv;
+    const spin = ora({
+      text: `Fire Linker - checking all links in `,
+      spinner: {
+        interval: 80, // Optional
+        frames: [".", "-", "–", "—", "–", "-"],
+      },
+    }).start();
+  
 
-  if (argv.j || argv._[0] != undefined) {
+  if (argv.j || argv._[0] != undefined || argv.a) {
+    if(argv.a)
+  {
+    
+    let apiUrl = argv.a;
+    apiProccessing(apiUrl);
+    spin.stop();
+  } else{
     //file procccesing
     let document = "";
 
@@ -165,16 +224,21 @@ function start() {
     document = argv.j || argv._[0];
     ignoreFile = argv.i != undefined || argv.i == "" ? argv.i : null;
     documentProccessing(document, ignoreFile, argv.j);
+    spin.stop();
+  }
   } else {
     //console.log(yargs.help());
+    spin.stop();
     console.log(`To use this tool type :
-  $flink <file> -- where file is the name of the file
-  
-  Options:
-    -i, --ignore <file>   Ignored URL patterns file
-    -j, --json            output to json
-    -h, --help            Show help                                      [boolean]
-    -v, --version         Show version number                            [boolean]`);
+    $flink <file> -- where file is the name of the file
+    
+    Options:
+      -j, --json     output to json
+      -a, --api      Check all links in API
+      -h, --help     Show help                                             [boolean]
+      -v, --version  Show version number                                   [boolean]`);
   }
 }
+
 start();
+//LINK PROCESSING
