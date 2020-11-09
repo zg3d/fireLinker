@@ -8,8 +8,6 @@ const path = require("path");
 const ora = require("ora");
 const AbortController = require("abort-controller");
 
-
-
 /* const timeout = setTimeout(() => {
   controller.abort();
 }, 150); */
@@ -56,7 +54,7 @@ const linkchecker = (link) => {
   return new Promise((resolve, reject) =>
     fetch(link.url, {
       method: "HEAD",
-      signal: (new AbortController()).signal,
+      signal: new AbortController().signal,
     })
       .then((res) => {
         link.code = res.status + "";
@@ -87,15 +85,29 @@ const linkchecker = (link) => {
   // status = res.status;
 };
 
-const documentProccessing = async (doc, ignoreDoc = null, json) => {
+const documentProccessing = async (doc) => {
+  if (doc == null) {
+    return null;
+  }
+  try {
+    let data = await fs.readFile(path.normalize(doc), "utf8");
+    return data;
+  } catch (e) {
+    console.log(e);
+    console.log(chalk.red("The <FILE> is not found"));
+    exitCode++;
+  }
+  return null;
+};
+
+const dataProccessing = async (data, ignoreData = null, json) => {
   //processDocument
+  if (data == null) {
+    return;
+  }
 
   try {
-    let data = await fs.readFile(path.normalize(doc), "utf8"); // gets the data in the document
-    // converts it to a string
-
-    if (ignoreDoc != null) {
-      let ignoreData = await fs.readFile(path.normalize(ignoreDoc), "utf8"); // gets the data from the ignored patterns document
+    if (ignoreData != null) {
       ignoreData = ignoreData.replace(/^#.*(\r?\n|\r)/gim, "");
 
       let ignorePatterns = [];
@@ -109,17 +121,17 @@ const documentProccessing = async (doc, ignoreDoc = null, json) => {
       ignorePatterns.forEach((regex) => (data = data.replace(regex, "")));
     }
 
-    
     let time = new Date();
     let links = [...new Set(data.match(link_reg))].map(
       (e) => new Link(e, StatusEnum.unknown)
     ); // maps all url into a Link class
     await Promise.all(links.map(linkchecker)); // waits for all the promises to return
-    
+
     if (json) {
       console.log(JSON.stringify(URLS));
     } else {
       URLS.forEach((e) => e.log());
+
       time = (new Date() - time) / 1000;
       console.log(
         `Fire Linker took ${Math.round(time)} secs to check ${
@@ -129,60 +141,40 @@ const documentProccessing = async (doc, ignoreDoc = null, json) => {
     }
   } catch (e) {
     exitCode++;
-    console.log(e);
-    console.log(chalk.red("The <FILE> is not found"));
   }
   process.exit(exitCode);
 };
-const apiProccessing = async (api) =>{
-
-  try{
-   
-    const urlparse =  require('url').parse(api);
+const apiProccessing = async (api) => {
+  try {
+    const urlparse = require("url").parse(api);
     let base = urlparse.protocol + "//" + urlparse.host;
     let data = await (await fetch(api)).json();
-  
+
     let arrayObj = data;
     let urlsToCheck = [];
-    
-      arrayObj.forEach(e=>{
-       
-          if(e.url)
-          {
-            let pat = /^https?:\/\//i;
-            if(pat.test(e.url))
-            {
-              urlsToCheck.push(e.url);
-            }
-            else{
-               urlsToCheck.push(base+e.url);
-            }
-          }
-      });
-      let time = new Date();
-      let links = [...new Set(urlsToCheck)].map(
-        (e) => new Link(e, StatusEnum.unknown)
-      ); // maps all url into a Link class
-      await Promise.all(links.map(linkchecker)); // waits for all the promises to return
-     
-   
-        URLS.forEach((e) => e.log());
-        time = (new Date() - time) / 1000;
-        console.log(
-          `Fire Linker took ${Math.round(time)} secs to check ${
-            URLS.length
-          } links.`
-        );
-    
-    
-     
 
-  }catch(e){
+    arrayObj.forEach((e) => {
+      if (e.url) {
+        let pat = /^https?:\/\//i;
+        if (pat.test(e.url)) {
+          urlsToCheck.push(e.url);
+        } else {
+          urlsToCheck.push(base + e.url);
+        }
+      }
+    });
+
+    urlsToCheck.forEach(async (e, i) => {
+      let data = await (await fetch(e)).text();
+
+      await dataProccessing(data);
+    });
+  } catch (e) {
     console.log(e);
   }
-}
+};
 
-function start() {
+async function start() {
   const argv = yargs
     .usage(
       "To use this tool type :\n$flink <file> -- where file is the name of the file"
@@ -191,7 +183,7 @@ function start() {
     .describe("j", "output to json")
     .nargs("a", 1)
     .describe("a", "Check all links in API")
-    .alias("a","api")
+    .alias("a", "api")
     .alias("j", "json")
     .alias("v", "version")
     .alias("i", "ignore")
@@ -199,36 +191,29 @@ function start() {
     .help("h")
     .alias("h", "help")
     .demandCommand(0, "").argv;
-    const spin = ora({
-      text: `Fire Linker - checking all links in `,
-      spinner: {
-        interval: 80, // Optional
-        frames: [".", "-", "–", "—", "–", "-"],
-      },
-    }).start();
-  
 
   if (argv.j || argv._[0] != undefined || argv.a) {
-    if(argv.a)
-  {
-    
-    let apiUrl = argv.a;
-    apiProccessing(apiUrl);
-    spin.stop();
-  } else{
-    //file procccesing
-    let document = "";
+    if (argv.a) {
+      let apiUrl = argv.a;
+      apiProccessing(apiUrl);
+    } else {
+      //file procccesing
+      let document = "";
 
-    let ignoreFile = "";
+      let ignoreFile = "";
 
-    document = argv.j || argv._[0];
-    ignoreFile = argv.i != undefined || argv.i == "" ? argv.i : null;
-    documentProccessing(document, ignoreFile, argv.j);
-    spin.stop();
-  }
+      document = argv.j || argv._[0];
+      ignoreFile = argv.i != undefined || argv.i == "" ? argv.i : null;
+
+      dataProccessing(
+        await documentProccessing(document),
+        await documentProccessing(ignoreFile),
+        argv.j
+      );
+    }
   } else {
     //console.log(yargs.help());
-    spin.stop();
+
     console.log(`To use this tool type :
     $flink <file> -- where file is the name of the file
     
