@@ -14,6 +14,11 @@
     "postcommit": "git update-index -g",
     "eslint-fix": "eslint --fix --ignore-path .gitignore ."
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zg3d/fireLinker.git"

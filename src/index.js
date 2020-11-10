@@ -121,7 +121,7 @@ const dataProccessing = async (data, ignoreData = null, json = false) => {
       ignorePatterns.forEach((regex) => (data = data.replace(regex, '')));
     }
 
-					const links = [...new Set(data.match(linkReg))].map((e) => new Link(e, StatusEnum.unknown)); // maps all url into a Link class
+    const links = [...new Set(data.match(linkReg))].map((e) => new Link(e, StatusEnum.unknown)); // maps all url into a Link class
     await Promise.all(links.map(linkchecker)); // waits for all the promises to return
 
     if (json) {
@@ -136,7 +136,7 @@ const dataProccessing = async (data, ignoreData = null, json = false) => {
 };
 const apiProccessing = async (api) => {
   try {
-    const urlparse = 		new (require('url').URL)(api);
+    const urlparse = new (require('url').URL)(api);
     const base = urlparse.protocol + '//' + urlparse.host;
     const data = await (await fetch(api)).json();
 
@@ -144,8 +144,7 @@ const apiProccessing = async (api) => {
     const urlsToCheck = [];
 
     arrayObj.forEach((e) => {
-      if (e.url) 
-	  {
+      if (e.url) {
         const pat = /^https?:\/\//i;
         if (pat.test(e.url)) {
           urlsToCheck.push(e.url);
@@ -165,8 +164,7 @@ const apiProccessing = async (api) => {
   }
 };
 
-async function start() 
-{
+async function start() {
   const argv = yargs
     .usage('To use this tool type :\n$flink <file> -- where file is the name of the file')
     .nargs('j', 1)
