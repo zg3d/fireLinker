@@ -7,6 +7,7 @@
 </p>
 
 > A CLI tool that searches documents for the status of URLs/Links
+
 ## Install
 
 ```sh
@@ -20,10 +21,13 @@ flink <FILE>
 ```
 
 ## Demo
+
 ![Alt Text](cliFlink.gif)
 
 ## Features
+
 ### Status codes Supported
+
   <ul>
   <li>200</li> 
   <li>400 </li>
@@ -32,30 +36,36 @@ flink <FILE>
   </ul>
 
 ### URL Protocols Supported
+
   <ul>
   <li>HTTP</li> 
   <li>HTTPS</li>
   </ul>
 
 ### Colors Supported
-* <p style="color:green">Green = GOOD URL</p>
-* <p style="color:red">Red = BAD URL</p>
-* <p style="color:grey">Grey =  UNKOWN URL</p>
+
+- <p style="color:green">Green = GOOD URL</p>
+- <p style="color:red">Red = BAD URL</p>
+- <p style="color:grey">Grey =  UNKOWN URL</p>
 
 ### Commands Supported
+
 ```
 To use this tool type :
     $flink <file> -- where file is the name of the file
-    
+
     Options:
       -j, --json     output to json
       -a, --api      Check all links in API
       -h, --help     Show help                                             [boolean]
       -v, --version  Show version number                                   [boolean]
 ```
+
 ### API Support
+
 needs to have a url attribute
 Usage
+
 ```sh
 $ flink -a http://localhost:3000/posts
 Link: http://localhost:3000/posts/af9597b1f6 status : GOOD
@@ -71,16 +81,12 @@ Link: http://localhost:3000/posts/f2951948eb status : GOOD
 Fire Linker took 0 secs to check 10 links.
 ```
 
-
-
 ## Author
 
 👤 **Devansh Shah**
 
-* Github: [@zg3d](https://github.com/zg3d)
+- Github: [@zg3d](https://github.com/zg3d)
 
 ## Show your support
 
 Give a ⭐️ if this project helped you!
-
-

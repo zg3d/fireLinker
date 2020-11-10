@@ -6,7 +6,14 @@
   "bin": {
     "flink": "./src/index.js"
   },
-  "scripts": {},
+  "scripts": {
+    "prettier": "prettier --write \"./**/*.{md,jsx,json,html,css,js,yml}\"",
+    "prettier-check": "prettier --check \"./**/*.{md,jsx,json,html,css,js,yml}\"",
+    "eslint": "eslint --ignore-path .gitignore .",
+    "precommit": "pretty-quick --staged",
+    "postcommit": "git update-index -g",
+    "eslint-fix": "eslint --fix --ignore-path .gitignore ."
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zg3d/fireLinker.git"
@@ -29,5 +36,11 @@
     "ora": "^5.1.0",
     "path": "^0.12.7",
     "yargs": "^16.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^7.13.0",
+    "husky": "^4.3.0",
+    "prettier": "2.1.2",
+    "pretty-quick": "^3.1.0"
   }
 }
