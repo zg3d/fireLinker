@@ -1,2 +1,2 @@
-let exitCode = 0;
-module.exports = exitCode;
+const Exit = {code: 0};
+module.exports = Exit;

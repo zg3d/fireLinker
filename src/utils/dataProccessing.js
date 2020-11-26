@@ -3,11 +3,12 @@ const Link = require('../classes/Link');
 const StatusEnum = require('../classes/Status');
 const linkchecker = require('./checker');
 const URLS = require('../classes/Url');
+const Exit = require('../classes/Exit');
 
 const dataProccessing = async (data, ignoreData = null, json = false) => {
   // processDocument
   if (data == null) {
-    return;
+    return false;
   }
 
   try {
@@ -33,8 +34,10 @@ const dataProccessing = async (data, ignoreData = null, json = false) => {
     } else {
       URLS.forEach((e) => e.log());
     }
+    return true;
   } catch (e) {
-    `${e}`;
+    Exit.code++;
+    return false;
   }
 };
 module.exports = dataProccessing;

@@ -12,7 +12,8 @@
     "eslint": "eslint --ignore-path .gitignore .",
     "precommit": "pretty-quick --staged",
     "postcommit": "git update-index -g",
-    "eslint-fix": "eslint --fix --ignore-path .gitignore ."
+    "eslint-fix": "eslint --fix --ignore-path .gitignore .",
+    "test": "jest"
   },
   "husky": {
     "hooks": {
@@ -45,6 +46,7 @@
   "devDependencies": {
     "eslint": "^7.13.0",
     "husky": "^4.3.0",
+    "jest": "^26.6.3",
     "prettier": "2.1.2",
     "pretty-quick": "^3.1.0"
   }
