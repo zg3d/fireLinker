@@ -17,7 +17,7 @@ test('checking a 200 code link', async () => {
 });
 
 test('checking a 404 code link', async () => {
-  const linkToCheck = new Link('https://www.google.com/invalid');
+  const linkToCheck = new Link('https://www.google.com/');
   fetch.mockReturnValue(Promise.resolve({status: 404}));
 
   await checker(linkToCheck);
