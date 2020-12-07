@@ -88,12 +88,3 @@ test('testing dataproccesing with  data and json as a boolean true', async () =>
   const json = true;
   expect(await dataProccessing(data, null, json)).toBe(true);
 });
-
-test('testing dataproccesing with an empty object', async () => {
-  expect(await dataProccessing({})).toBe(false);
-});
-
-test('testing dataproccesing with an array', async () => {
-  expect(await dataProccessing([])).toBe(false);
-});
-
