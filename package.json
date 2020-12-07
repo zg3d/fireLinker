@@ -1,10 +1,10 @@
 {
   "name": "firelinker",
-  "version": "0.9.0",
+  "version": "0.0.0-development",
   "description": "A tool to check for broken links in a given document",
   "main": "./src/index.js",
   "bin": {
-    "flink": "./src/index.js"
+    "flink": "src/index.js"
   },
   "scripts": {
     "prettier": "prettier --write \"./**/*.{md,jsx,json,html,css,js,yml}\"",
@@ -48,6 +48,7 @@
     "husky": "^4.3.0",
     "jest": "^26.6.3",
     "prettier": "2.1.2",
-    "pretty-quick": "^3.1.0"
+    "pretty-quick": "^3.1.0",
+    "semantic-release": "^17.3.0"
   }
 }

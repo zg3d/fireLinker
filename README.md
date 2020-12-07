@@ -11,7 +11,7 @@
 ## Install
 
 ```sh
-npm i -g https://github.com/zg3d/fireLinker
+npm i -g firelinker
 ```
 
 ## Usage
