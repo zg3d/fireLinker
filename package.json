@@ -1,10 +1,10 @@
 {
   "name": "firelinker",
-  "version": "0.9.0",
+  "version": "0.1.0",
   "description": "A tool to check for broken links in a given document",
   "main": "./src/index.js",
   "bin": {
-    "flink": "src/index.js"
+    "flink": "./src/index.js"
   },
   "scripts": {
     "prettier": "prettier --write \"./**/*.{md,jsx,json,html,css,js,yml}\"",
@@ -37,7 +37,6 @@
   "dependencies": {
     "abort-controller": "^3.0.0",
     "chalk": "^4.1.0",
-    "flink": "file:..\\AppData\\Roaming\\npm\\node_modules\\flink",
     "fs": "0.0.1-security",
     "node-fetch": "^2.6.1",
     "ora": "^5.1.0",
